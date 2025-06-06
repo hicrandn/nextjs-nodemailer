@@ -1,13 +1,10 @@
 "use server";
 import nodemailer from "nodemailer";
+import { ContactFormValues, ContactFormResponse } from "@/lib/types/contact";
 
-interface ContactFormValues {
-  name: string;
-  email: string;
-  message: string;
-}
-
-export async function sendContactMail(data: ContactFormValues) {
+export async function sendContactMail(
+  data: ContactFormValues
+): Promise<ContactFormResponse> {
   const { name, email, message } = data;
 
   // SMTP ayarlarıyla bir e-posta gönderici (transporter) oluşturuluyor
@@ -37,9 +34,9 @@ ${message}
   };
 
   try {
-    // E-posta gönderiliyor
     await transporter.sendMail(mailOptions);
     console.log("E-posta başarıyla gönderildi.");
+    return { success: true, message: "E-posta başarıyla gönderildi." };
   } catch (error) {
     console.error("E-posta gönderilirken hata oluştu:", error);
     throw new Error("E-posta gönderilemedi.");

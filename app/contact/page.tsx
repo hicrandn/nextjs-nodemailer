@@ -14,12 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { sendContactMail } from "./action";
-
-interface ContactFormValues {
-  name: string;
-  email: string;
-  message: string;
-}
+import { ContactFormValues } from "@/lib/types/contact";
 
 const ContactPage = () => {
   const form = useForm<ContactFormValues>({
@@ -32,9 +27,16 @@ const ContactPage = () => {
   });
 
   const onSubmit = async (data: ContactFormValues) => {
-    await sendContactMail(data); // server action
-    form.reset(); // formu temizle
-    alert("Mesaj gönderildi!");
+    try {
+      const result = await sendContactMail(data);
+      if (result.success) {
+        alert(result.message);
+        form.reset();
+      }
+    } catch (error: unknown) {
+      console.error("E-posta gönderme hatası:", error);
+      alert("E-posta gönderilirken bir hata oluştu. Lütfen tekrar deneyin.");
+    }
   };
 
   return (
