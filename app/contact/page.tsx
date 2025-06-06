@@ -13,9 +13,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { sendContactMail } from "./action";
 
 interface ContactFormValues {
-  username: string;
+  name: string;
   email: string;
   message: string;
 }
@@ -24,14 +25,16 @@ const ContactPage = () => {
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
     defaultValues: {
-      username: "",
+      name: "",
       email: "",
       message: "",
     },
   });
 
-  const onSubmit = (data: ContactFormValues) => {
-    console.log(data);
+  const onSubmit = async (data: ContactFormValues) => {
+    await sendContactMail(data); // server action
+    form.reset(); // formu temizle
+    alert("Mesaj gönderildi!");
   };
 
   return (
@@ -46,7 +49,7 @@ const ContactPage = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
-              name="username"
+              name="name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Username</FormLabel>
