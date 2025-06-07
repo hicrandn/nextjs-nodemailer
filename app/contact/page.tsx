@@ -3,10 +3,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { contactSchema } from "@/lib/validation";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -31,12 +31,12 @@ const ContactPage = () => {
     try {
       const result = await sendContactMail(data);
       if (result.success) {
-        alert(result.message);
+        toast.success(result.message);
         form.reset();
       }
     } catch (error: unknown) {
-      console.error("E-posta gönderme hatası:", error);
-      alert("E-posta gönderilirken bir hata oluştu. Lütfen tekrar deneyin.");
+      console.error("Error sending email:", error);
+      toast.error("Failed to send email. Please try again.");
     }
   };
 

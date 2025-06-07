@@ -7,38 +7,36 @@ export async function sendContactMail(
 ): Promise<ContactFormResponse> {
   const { name, email, message } = data;
 
-  // SMTP ayarlarıyla bir e-posta gönderici (transporter) oluşturuluyor
   const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST, // SMTP sunucu adresi
-    port: Number(process.env.EMAIL_PORT), // SMTP portu
-    secure: false, // Genelde 587 portu için false olur (TLS için)
+    host: process.env.EMAIL_HOST,
+    port: Number(process.env.EMAIL_PORT),
+    secure: false,
     auth: {
-      user: process.env.EMAIL_USER, // Gönderen e-posta adresi
-      pass: process.env.EMAIL_PASS, // SMTP için şifre veya uygulama şifresi
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     },
   });
-  // E-posta içeriği hazırlanıyor
+
   const mailOptions = {
-    from: `"${process.env.EMAIL_FROM_NAME}" <${process.env.EMAIL_USER}>`, // Kimden geldiği (isim ve e-posta)
-    to: process.env.EMAIL_USER, // Kendimize ya da sabit bir alıcıya gönderebiliriz
-    subject: `📬 Yeni İletişim Formu Mesajı - ${name}`, // E-posta başlığı
+    from: `"${process.env.EMAIL_FROM_NAME}" <${process.env.EMAIL_USER}>`,
+    to: process.env.EMAIL_USER,
+    subject: `📬 New Contact Form Message - ${name}`,
     text: `
-Yeni bir mesaj aldınız:
+You have a new message:
 
-👤 Gönderen: ${name}
-📧 E-posta: ${email}
+👤 Sender: ${name}
+📧 Email: ${email}
 
-📝 Mesaj:
+📝 Message:
 ${message}
     `,
   };
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log("E-posta başarıyla gönderildi.");
-    return { success: true, message: "E-posta başarıyla gönderildi." };
+    return { success: true, message: "Email sent successfully." };
   } catch (error) {
-    console.error("E-posta gönderilirken hata oluştu:", error);
-    throw new Error("E-posta gönderilemedi.");
+    console.error("Error sending email:", error);
+    throw new Error("Failed to send email.");
   }
 }
